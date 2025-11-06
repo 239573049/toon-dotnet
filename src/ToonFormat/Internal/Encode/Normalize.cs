@@ -102,13 +102,10 @@ namespace ToonFormat.Internal.Encode
                 var type = value.GetType();
                 var properties = type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 
-                foreach (var prop in properties)
+                foreach (var prop in properties.Where(prop => prop.CanRead))
                 {
-                    if (prop.CanRead)
-                    {
-                        var propValue = prop.GetValue(value);
-                        jsonObject[prop.Name] = NormalizeValue(propValue);
-                    }
+                    var propValue = prop.GetValue(value);
+                    jsonObject[prop.Name] = NormalizeValue(propValue);
                 }
 
                 return jsonObject;
