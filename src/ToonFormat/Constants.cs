@@ -37,7 +37,6 @@ namespace ToonFormat
         public const char CARRIAGE_RETURN = '\r';
         public const char TAB = '\t';
 
-
         // #region Delimiter defaults and mapping
         public const ToonDelimiter DEFAULT_DELIMITER_ENUM = ToonDelimiter.COMMA;
 
