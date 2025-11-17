@@ -101,8 +101,8 @@ namespace ToonFormat.Internal.Decode
             if (bracketStart > 0)
             {
                 var rawKey = content.Substring(0, bracketStart).Trim();
-                key = rawKey.StartsWith(Constants.DOUBLE_QUOTE.ToString()) 
-                    ? ParseStringLiteral(rawKey) 
+                key = rawKey.StartsWith(Constants.DOUBLE_QUOTE.ToString())
+                    ? ParseStringLiteral(rawKey)
                     : rawKey;
             }
 
@@ -202,51 +202,48 @@ namespace ToonFormat.Internal.Decode
         /// </summary>
         public static List<string> ParseDelimitedValues(string input, char delimiter)
         {
-            var values = new List<string>();
-            var current = string.Empty;
+            var values = new List<string>(16); // 预分配一些容量
+            var current = new System.Text.StringBuilder(input.Length);
             bool inQuotes = false;
-            int i = 0;
 
-            while (i < input.Length)
+            for (int i = 0; i < input.Length; i++)
             {
-                var ch = input[i];
+                char ch = input[i];
 
-                if (ch == Constants.BACKSLASH && i + 1 < input.Length && inQuotes)
+                if (ch == Constants.BACKSLASH && inQuotes && i + 1 < input.Length)
                 {
-                    // Escape sequence in quoted string
-                    current += ch.ToString() + input[i + 1];
-                    i += 2;
+                    // 转义处理
+                    current.Append(ch);
+                    current.Append(input[i + 1]);
+                    i++;
                     continue;
                 }
 
                 if (ch == Constants.DOUBLE_QUOTE)
                 {
                     inQuotes = !inQuotes;
-                    current += ch;
-                    i++;
+                    current.Append(ch);
                     continue;
                 }
 
                 if (ch == delimiter && !inQuotes)
                 {
-                    values.Add(current.Trim());
-                    current = string.Empty;
-                    i++;
+                    values.Add(current.ToString().Trim());
+                    current.Clear();
                     continue;
                 }
 
-                current += ch;
-                i++;
+                current.Append(ch);
             }
 
-            // Add last value
-            if (!string.IsNullOrEmpty(current) || values.Count > 0)
+            if (current.Length > 0 || values.Count > 0)
             {
-                values.Add(current.Trim());
+                values.Add(current.ToString().Trim());
             }
 
             return values;
         }
+
 
         /// <summary>
         /// Maps an array of string tokens to JSON primitive values.
@@ -408,7 +405,7 @@ namespace ToonFormat.Internal.Decode
         /// </summary>
         public static bool IsArrayHeaderAfterHyphen(string content)
         {
-            return content.Trim().StartsWith(Constants.OPEN_BRACKET.ToString()) 
+            return content.Trim().StartsWith(Constants.OPEN_BRACKET.ToString())
                 && StringUtils.FindUnquotedChar(content, Constants.COLON) != -1;
         }
 
