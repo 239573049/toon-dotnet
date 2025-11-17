@@ -367,12 +367,9 @@ namespace ToonFormat.Internal.Encode
                     {
                         // Fall back to list format for non-uniform arrays of objects
                         writer.PushListItem(depth, $"{encodedKey}{Constants.OPEN_BRACKET}{arr.Count}{Constants.CLOSE_BRACKET}{Constants.COLON}");
-                        foreach (var item in arr)
+                        foreach (var itemObj in arr.OfType<JsonObject>())
                         {
-                            if (item is JsonObject itemObj)
-                            {
-                                EncodeObjectAsListItem(itemObj, writer, depth + 1, options);
-                            }
+                            EncodeObjectAsListItem(itemObj, writer, depth + 1, options);
                         }
                     }
                 }
