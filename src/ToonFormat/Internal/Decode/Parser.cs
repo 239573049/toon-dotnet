@@ -289,9 +289,7 @@ namespace ToonFormat.Internal.Decode
             if (LiteralUtils.IsNumericLiteral(trimmed))
             {
                 var parsedNumber = double.Parse(trimmed, CultureInfo.InvariantCulture);
-                // Normalize negative zero to positive zero
-                if (parsedNumber == 0.0 && double.IsNegativeInfinity(1.0 / parsedNumber))
-                    return JsonValue.Create(0.0);
+                parsedNumber = FloatUtils.NormalizeSignedZero(parsedNumber);
                 return JsonValue.Create(parsedNumber);
             }
 
