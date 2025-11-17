@@ -137,11 +137,11 @@ namespace ToonFormat.Internal.Encode
                 case long l:
                     return JsonValue.Create(l);
                 case double d:
-                    if (d == 0.0 && double.IsNegative(d)) return JsonValue.Create(0.0);
+                    if (BitConverter.DoubleToInt64Bits(d) == BitConverter.DoubleToInt64Bits(-0.0)) return JsonValue.Create(0.0);
                     if (!double.IsFinite(d)) return null;
                     return JsonValue.Create(d);
                 case float f:
-                    if (f == 0.0f && float.IsNegative(f)) return JsonValue.Create(0.0f);
+                    if (BitConverter.SingleToInt32Bits(f) == BitConverter.SingleToInt32Bits(-0.0f)) return JsonValue.Create(0.0f);
                     if (!float.IsFinite(f)) return null;
                     return JsonValue.Create(f);
                 case decimal dec:
